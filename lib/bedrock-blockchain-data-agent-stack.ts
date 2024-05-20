@@ -48,7 +48,7 @@ export class BedrockBlockchainDataAgentStack extends cdk.Stack {
     const actionGroupFunction = new lambda.PythonFunction(this, 'ActionGroupFunction', {
       runtime: cdk.aws_lambda.Runtime.PYTHON_3_12,
       entry: path.join(__dirname, './lambda/bedrock-agent-txtsql-action'),
-      handler: 'index.lambda_handler',
+      handler: 'lambda_handler',
       timeout: cdk.Duration.seconds(300),
       environment: { // Optional: Set environment variables for the function
         ATHENA_QUERY_RESULTS_BUCKET_NAME: athenaBucket.bucketName,
@@ -56,6 +56,9 @@ export class BedrockBlockchainDataAgentStack extends cdk.Stack {
     });
 
     const lambdaRole = actionGroupFunction.role;
+    lambdaRole?.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonS3FullAccess'));
+    lambdaRole?.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonAthenaFullAccess'));
+
     athenaBucket.addToResourcePolicy(
       new iam.PolicyStatement({
         effect: iam.Effect.ALLOW,

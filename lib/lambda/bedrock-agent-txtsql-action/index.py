@@ -15,8 +15,9 @@ def lambda_handler(event, context):
         query = event['requestBody']['content']['application/json']['properties'][0]['value']
 
         print("the received QUERY:",  query)
-        bucket_name = os.environ.get('BUCKET_NAME')
-        s3_output = "s3://".format(bucket_name)
+        bucket_name = os.environ['ATHENA_QUERY_RESULTS_BUCKET_NAME']
+
+        s3_output = s3_output = "s3://" + bucket_name
 
         # Execute the query and wait for completion
         execution_id = execute_athena_query(query, s3_output)
