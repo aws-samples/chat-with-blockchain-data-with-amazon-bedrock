@@ -5,16 +5,36 @@ import * as iam from 'aws-cdk-lib/aws-iam';
 import * as lambda from '@aws-cdk/aws-lambda-python-alpha';
 import { bedrock } from '@cdklabs/generative-ai-cdk-constructs';
 import * as path from 'path';
+import { CfnInclude } from 'aws-cdk-lib/cloudformation-include';
+import { readFileSync } from 'fs';
 
 export class BedrockBlockchainDataAgentStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
-
+    const orchestration = readFileSync('lib/prompts/orchestration.txt', 'utf-8');
     const agent = new bedrock.Agent(this, 'Agent', {
-      foundationModel: bedrock.BedrockFoundationModel.ANTHROPIC_CLAUDE_INSTANT_V1_2,
-      instruction: 'You are a SQL developer that creates queries for Amazon Athena. You are allowed to return data and Amazon Athena queries when requested. You will use the schema tables provided here {athena_schema} to create queries for the Athena database like {athena_example}. Return responses exactly how they are fetched. Be friendly in every response.',
-      
+      foundationModel: bedrock.BedrockFoundationModel.ANTHROPIC_CLAUDE_HAIKU_V1_0,
+      shouldPrepareAgent: true,
+      instruction: 'Instructions for SQL Developer Agent for Amazon Athena Bitcoin and Ethereum Databases Role: Create queries for Amazon Athena Bitcoin and Ethereum databases. Databases and Tables: Bitcoin: blocks, transactions Ethereum: blocks, contracts, logs, token_transfers, traces, transactions Objective: Generate SQL queries based on the schema and user request. Return the SQL query and results. Guidelines: 1. Query Decomposition: Understand the request. Identify the blockchain (Bitcoin or Ethereum). If unclear, ask for clarification. - For general requests (e.g., how many blocks are there"), query both databases using UNION. - Break down complex requests into sub-queries using the schema. 2. SQL Creation: Use relevant tables and fields from the schema. - Use btc for Bitcoin (e.g., btc.blocks) and eth for Ethereum (e.g., eth.logs). Cast varchar dates to date (e.g., cast(date_column as date)). - Ensure timestamp literals (e.g., timestamp 2024-05-16). - Create precise SQL queries. Avoid mistakes: proper casting, correct prefixes, accurate syntax. 3. Execution and Response: Execute queries in Athena. Return results as fetched. Limit results to 20 to avoid memory issues.',
+      promptOverrideConfiguration: {
+        promptConfigurations: [
+          {
+            promptType: bedrock.PromptType.ORCHESTRATION,
+            basePromptTemplate: orchestration,
+            promptState: bedrock.PromptState.ENABLED,
+            promptCreationMode: bedrock.PromptCreationMode.OVERRIDDEN,
+            inferenceConfiguration: {
+              temperature: 0.0,
+              topP: 1,
+              topK: 250,
+              maximumLength: 2048,
+              stopSequences: ['</invoke>', '</answer>', '</error>'],
+            },
+          },
+        ]
+      }
     });
+
 
     const athenaBucket = new s3.Bucket(this, 'AthenaQueryResultsBucket', {
       // bucketName: 'XXXXXXXXXXXXXX', // Optional: Specify a bucket name
@@ -24,7 +44,7 @@ export class BedrockBlockchainDataAgentStack extends cdk.Stack {
       // Add any additional bucket properties or configurations here
     });
 
-    
+
     const actionGroupFunction = new lambda.PythonFunction(this, 'ActionGroupFunction', {
       runtime: cdk.aws_lambda.Runtime.PYTHON_3_12,
       entry: path.join(__dirname, './lambda/bedrock-agent-txtsql-action'),
@@ -44,16 +64,19 @@ export class BedrockBlockchainDataAgentStack extends cdk.Stack {
         resources: [`${athenaBucket.bucketArn}/*`],
       })
     );
-    
-    const actionGroup = new bedrock.AgentActionGroup(this,'MyActionGroup',{
+
+    const actionGroup = new bedrock.AgentActionGroup(this, 'MyActionGroup', {
       actionGroupName: 'query-athena-cdk',
       description: 'Uses Amazon Athena with s3 data source that contains bitcoin and ethereum data',
       actionGroupExecutor: actionGroupFunction,
       actionGroupState: "ENABLED",
       apiSchema: bedrock.ApiSchema.fromAsset(path.join(__dirname, '../athena-schema.json')),
     });
-    
+
     agent.addActionGroup(actionGroup);
 
+    const nestedStack = new CfnInclude(this, 'NestedStack', {
+      templateFile: path.join(__dirname, './aws-public-blockchain.yaml'),
+    });
   }
 }
