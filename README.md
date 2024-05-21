@@ -1,5 +1,5 @@
 # Bedrock Blockchain Data Agent
-After cloning the repository, run install the necessary dependencies with `npm install` 
+After cloning the repository, install the necessary dependencies with `npm install` 
 
 This CDK uses [experimental CDK constructs](npm install @cdklabs/generative-ai-cdk-constructs@0.1.150) to deploy a Bedrock agent.
 
