@@ -108,7 +108,7 @@ Here are examples of Amazon Athena queries for the Bitcoin Database <bitcoin_ath
   </bitcoin_athena_example>
 </bitcoin_athena_examples>
 
-        Here are the table schemas for the Amazon Athena Ethereum database <ethereum_athena_schemas>. 
+        Here are the table schemas for the Amazon Athena Ethereum database <ethereum_athena_schemas>.
 
 <ethereum_athena_schemas>
   <ethereum_athena_schema>
@@ -291,9 +291,17 @@ TBLPROPERTIES (
   </ethereum_athena_schema>
 </ethereum_athena_schemas>
 
-Here are examples of Amazon Athena queries for the Ethereum Database <ethereum_athena_examples>.
+Here are examples of Amazon Athena queries for the Ethereum Database <ethereum_athena_examples>.  If a query is made with a contract address make sure to convert the contract address to lowercase with the 'lower' method.  
 
-<ethereum__athena_examples>
+<ethereum_athena_examples>
+  <ethereum_athena_example>
+    SELECT COUNT(*) AS token_transfers 
+FROM eth.token_transfers 
+WHERE block_timestamp >= TIMESTAMP '2024-05-20'  
+AND block_timestamp < TIMESTAMP '2024-05-21' 
+AND lower(token_address) = '0x514910771AF9Ca656af840dff83E8264EcF986CA'
+
+  </ethereum_athena_example>
   <ethereum_athena_example>
   SELECT * from eth.blocks where date='2024-03-11'
   </ethereum_athena_example>
