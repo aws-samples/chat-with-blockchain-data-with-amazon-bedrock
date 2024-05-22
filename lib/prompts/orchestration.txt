@@ -14,7 +14,7 @@
             </parameters>
         </invoke>
         </function_calls>
-
+ 
         Here are the functions available:
         <functions>
           $tools$
@@ -299,7 +299,7 @@ Here are examples of Amazon Athena queries for the Ethereum Database <ethereum_a
 FROM eth.token_transfers 
 WHERE block_timestamp >= TIMESTAMP '2024-05-20'  
 AND block_timestamp < TIMESTAMP '2024-05-21' 
-AND lower(token_address) = '0x514910771AF9Ca656af840dff83E8264EcF986CA'
+AND lower(token_address) = lower('0x514910771AF9Ca656af840dff83E8264EcF986CA')
 
   </ethereum_athena_example>
   <ethereum_athena_example>
