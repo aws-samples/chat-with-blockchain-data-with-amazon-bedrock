@@ -1,7 +1,7 @@
 # Bedrock Blockchain Data Agent
 This repository demonstrates how Amazon Bedrock Agents can be used to enable natural language queries of blockchain data. It uses the Bitcoin and Ethereum  data sets from [AWS Public Blockchain Data](https://registry.opendata.aws/aws-public-blockchain/).
 
-To learn more, watch this overview and demo [Broadcast video]().
+To learn more, watch this overview and demo [Broadcast video](https://broadcast.amazon.com/videos/1144179).
 
 Note, this CDK uses [experimental CDK constructs](npm install @cdklabs/generative-ai-cdk-constructs@0.1.150) to deploy the Bedrock agent.
 
