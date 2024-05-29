@@ -21,6 +21,8 @@ Resources:
       PublicAccessBlockConfiguration:
         BlockPublicAcls: true
         BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
 
   AthenaResultsBucketPolicy:
     Type: AWS::S3::BucketPolicy
@@ -48,6 +50,7 @@ Resources:
       RecursiveDeleteOption: true
       State: ENABLED
       WorkGroupConfiguration:
+        EnforceWorkGroupConfiguration: true
         RequesterPaysEnabled: true
         ResultConfiguration:
           OutputLocation: !Join
@@ -55,6 +58,8 @@ Resources:
             - - s3://
               - !Ref AthenaResultsBucket
               - /results/
+          EncryptionConfiguration:
+            EncryptionOption: SSE_S3
 
   GlueDatabaseBTC:
     Type: AWS::Glue::Database

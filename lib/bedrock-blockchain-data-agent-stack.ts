@@ -1,5 +1,6 @@
 import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
+import * as athena from 'aws-cdk-lib/aws-athena';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as lambda from '@aws-cdk/aws-lambda-python-alpha';
@@ -42,9 +43,26 @@ export class BedrockBlockchainDataAgentStack extends cdk.Stack {
       removalPolicy: cdk.RemovalPolicy.DESTROY, // Optional: Specify the removal policy for the bucket
       autoDeleteObjects: true, // Optional: Automatically delete objects when the bucket is deleted
       versioned: true, // Optional: Enable versioning for the bucket
-      // Add any additional bucket properties or configurations here
+      enforceSSL: true, // Optional: Enable SSL for the bucket
+      blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL, // Block all public access
+      encryption: s3.BucketEncryption.S3_MANAGED, // Enable server-side encryption with S3 managed keys
+
     });
 
+    const workGroup = new athena.CfnWorkGroup(this, 'WorkGroup', {
+      name: 'athena-workgroup',
+      description: 'Workgroup with encrypted query results',
+      recursiveDeleteOption: true,
+      workGroupConfiguration: {
+        enforceWorkGroupConfiguration: true,
+        resultConfiguration: {
+          outputLocation: `s3://${athenaBucket.bucketName}/`,
+          encryptionConfiguration: {
+            encryptionOption: 'SSE_S3' // Use server-side encryption with S3 managed keys
+          }
+        }
+      }
+    });
 
     const actionGroupFunction = new lambda.PythonFunction(this, 'ActionGroupFunction', {
       runtime: cdk.aws_lambda.Runtime.PYTHON_3_12,
