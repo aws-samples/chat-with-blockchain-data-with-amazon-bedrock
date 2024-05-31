@@ -92,6 +92,28 @@ Here are examples of Amazon Athena queries for the Bitcoin Database <bitcoin_ath
 
 <bitcoin_athena_examples>
   <bitcoin_athena_example>
+    SELECT
+  t.hash AS transaction_hash,
+  t.block_number,
+  t.block_timestamp,
+  input_struct.index AS input_index,
+  input_struct.spent_transaction_hash,
+  input_struct.spent_output_index,
+  input_struct.address AS input_address,
+  input_struct.value AS input_value,
+  output_struct.index AS output_index,
+  output_struct.address AS output_address,
+  output_struct.value AS output_value
+FROM 
+  transactions t
+  CROSS JOIN UNNEST(t.inputs) AS input_array (input_struct)
+  CROSS JOIN UNNEST(t.outputs) AS output_array (output_struct)
+WHERE 
+  t.date = '2024-05-31'
+LIMIT 100;
+
+  </bitcoin_athena_example>
+  <bitcoin_athena_example>
   SELECT * from btc.blocks where date='2024-03-11'
   </bitcoin_athena_example>
   
