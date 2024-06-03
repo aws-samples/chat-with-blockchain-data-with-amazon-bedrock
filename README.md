@@ -1,5 +1,5 @@
 # Bedrock Blockchain Data Agent
-This repository demonstrates how Amazon Bedrock Agents can be used to enable natural language queries of Bitcoin and Ethereum blockchain data. For example, it can provide responsees to questions like:
+This repository demonstrates how Amazon Bedrock Agents can be used to enable natural language queries of Bitcoin and Ethereum blockchain data. For example, it can provide responses to questions like:
 * how many transactions happened on Bitcoin yesterday?
 * how much USDC was transferred last week?
 
@@ -7,7 +7,7 @@ For the second question, the agent infers this is for Ethereum so it does not ne
 
 So how does it work? The agent is provided a set of instructions which indicate what it should do, what the data source schema is, how to handle error cases by retrying, and many more things. The complete instructions can be found in the [agent stack definition](./lib/bedrock-blockchain-data-agent-stack.ts).
 
-The agent is also configured via its orchestration instructions, wwhich orchestrates how it should process input and which [action group](https://docs.aws.amazon.com/bedrock/latest/userguide/agents-action-create.html) to invoke.
+The agent is also configured via its orchestration instructions, which orchestrates how it should process input and which [action group](https://docs.aws.amazon.com/bedrock/latest/userguide/agents-action-create.html) to invoke.
 
 This deployment uses the Bitcoin and Ethereum data sets from [AWS Public Blockchain Data](https://registry.opendata.aws/aws-public-blockchain/) and deploys [an Athena-based stack](./lib/aws-public-blockchain.yaml) to support querying the data sets which are in Amazon S3.
 
