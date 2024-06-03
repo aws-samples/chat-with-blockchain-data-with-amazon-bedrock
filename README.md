@@ -14,6 +14,8 @@ This deployment uses the Bitcoin and Ethereum data sets from [AWS Public Blockch
 Note, this CDK deploys the Bedrock Agent by using [experimental CDK constructs](npm install @cdklabs/generative-ai-cdk-constructs@0.1.150) that are liable to change.
 
 ### Installation
+
+**Prerequisites: ** Installation of the [AWS CDK](https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html#getting_started_install) and [Docker](https://www.docker.com/) 
 After cloning the repository, install the necessary dependencies:
 
 ```javascript
