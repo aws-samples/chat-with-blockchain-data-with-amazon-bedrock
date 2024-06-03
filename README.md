@@ -16,6 +16,7 @@ Note, this CDK deploys the Bedrock Agent by using [experimental CDK constructs](
 ### Installation
 
 **Prerequisites:** Installation of the [AWS CDK](https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html#getting_started_install) and [Docker](https://www.docker.com/) 
+
 After cloning the repository, install the necessary dependencies:
 
 ```javascript
