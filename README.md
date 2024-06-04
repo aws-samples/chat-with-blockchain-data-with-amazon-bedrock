@@ -43,7 +43,7 @@ It takes approximately two minutes for the CDK to be deployed.
 ### Testing
 Now that the CDK stack has been deployed, you can test it within the Bedrock console.
 
-**Note:** If this is your first time using Amazon Bedrock, navigate to [Model access] on the left sidebar of the Bedrock Console (https://us-east-1.console.aws.amazon.com/bedrock/home?region=us-east-1#modelaccess) and enable access for Claude 3 Haiku. You can alternatively enable access for all available models. 
+**Note:** If this is your first time using Amazon Bedrock, navigate to [Model access](https://us-east-1.console.aws.amazon.com/bedrock/home?region=us-east-1#modelaccess) on the left sidebar of the Bedrock Console and enable access for Claude 3 Haiku. You can alternatively enable access for all available models. 
 
 1. Navigate to the Amazon Bedrock service in the AWS Console and choose [Agents](https://us-east-1.console.aws.amazon.com/bedrock/home?region=us-east-1#agents) under the Orchestration tab on the left sidebar.
 2. Select the newly created Agent that starts with the name "bedrock-agent-*"
