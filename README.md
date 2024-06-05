@@ -11,7 +11,7 @@ The agent is also configured via its orchestration instructions, which orchestra
 
 This deployment uses the Bitcoin and Ethereum data sets from [AWS Public Blockchain Data](https://registry.opendata.aws/aws-public-blockchain/) and deploys [an Athena-based stack](./lib/aws-public-blockchain.yaml) to support querying the data sets which are in Amazon S3.
 
-Note, this CDK deploys the Bedrock Agent by using [experimental CDK constructs]((https://www.npmjs.com/package/@cdklabs/generative-ai-cdk-constructs) that are liable to change.
+Note, this CDK deploys the Bedrock Agent by using [experimental CDK constructs](https://www.npmjs.com/package/@cdklabs/generative-ai-cdk-constructs) that are liable to change.
 
 ### Installation
 
