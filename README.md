@@ -15,7 +15,7 @@ Note, this CDK deploys the Bedrock Agent by using [experimental CDK constructs](
 
 ### Installation
 
-**Prerequisites:** Installation of the [AWS CDK](https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html#getting_started_install) and [Docker](https://www.docker.com/) 
+**Prerequisites:** The [AWS CDK](https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html#getting_started_install) should be installed and [Docker](https://www.docker.com/) should be running.
 
 After cloning the repository, install the necessary dependencies:
 
@@ -35,7 +35,7 @@ cdk bootstrap aws://<ACCOUNT_NUMBER>/<REGION>
 
 Deploy the CDK stack:
 ```
-cdk deploy BedrockBlockchainDataAgentStack
+cdk deploy BedrockBlockchainDataAgentStack --profile <aws-profile-name> // The --profile is optional; if omitted the default profile will be used
 ```
 
 It takes approximately two minutes for the CDK to be deployed. 
