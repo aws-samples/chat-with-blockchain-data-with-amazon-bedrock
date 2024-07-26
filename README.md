@@ -48,6 +48,8 @@ cdk deploy BedrockBlockchainDataAgentStack --profile <aws-profile-name> // The -
 
 It takes approximately two minutes for the CDK to be deployed. 
 
+Note: Due to the Glue Catalog synchronization process, it will take approximately 4-5 minutes for the Ethereum data to become available after the initial deployment.
+
 ### Testing
 Now that the CDK stack has been deployed, you can test it within the Bedrock console.
 
