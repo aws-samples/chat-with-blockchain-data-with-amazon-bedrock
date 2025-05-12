@@ -25,7 +25,7 @@ npm install -g aws-cdk
 
 Ensure [Docker](https://www.docker.com/) is installed and running.
 
-After cloning the repository, install the necessary dependencies:
+After cloning the repository, change into the project directory, and install the necessary dependencies:
 
 ```javascript
 npm install
