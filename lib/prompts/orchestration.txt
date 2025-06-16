@@ -362,6 +362,270 @@ AND lower(token_address) = lower('0x514910771AF9Ca656af840dff83E8264EcF986CA')
   </ethereum_athena_example>
 </ethereum_athena_examples>
 
+
+  Here are the table schemas for the Amazon Athena TON database <ton_athena_schemas>.
+
+  <ton_athena_schemas>
+    <ton_athena_schema>
+    CREATE EXTERNAL TABLE `blocks`(
+      `workchain` int, 
+      `shard` bigint, 
+      `seqno` int, 
+      `root_hash` string, 
+      `file_hash` string, 
+      `mc_block_workchain` int, 
+      `mc_block_shard` bigint, 
+      `mc_block_seqno` int, 
+      `gen_utime` int, 
+      `created_by` string, 
+      `tx_count` int)
+    PARTITIONED BY ( 
+      `date` string)
+    ROW FORMAT SERDE 
+      'org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe' 
+    STORED AS INPUTFORMAT 
+      'org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat' 
+    OUTPUTFORMAT 
+      'org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat'
+    LOCATION
+      's3://ton-blockchain-private-datalake-us-east-1-parquet/v1.1/ton/blocks'
+    TBLPROPERTIES (
+    )
+    </ton_athena_schema>
+
+
+    <ton_athena_schema>
+
+    CREATE EXTERNAL TABLE `dex_trades`(
+      `tx_hash` string, 
+      `trace_id` string, 
+      `project_type` string, 
+      `project` string, 
+      `event_time` int, 
+      `event_type` string, 
+      `trader_address` string, 
+      `pool_address` string, 
+      `token_sold_address` string, 
+      `token_bought_address` string, 
+      `amount_sold_raw` decimal(38,0), 
+      `amount_bought_raw` decimal(38,0), 
+      `volume_usd` decimal(20,6))
+    PARTITIONED BY ( 
+      `date` string)
+    ROW FORMAT SERDE 
+      'org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe' 
+    STORED AS INPUTFORMAT 
+      'org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat' 
+    OUTPUTFORMAT 
+      'org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat'
+    LOCATION
+      's3://ton-blockchain-private-datalake-us-east-1-parquet/v1.1/ton/dex_trades'
+    TBLPROPERTIES (
+    )
+
+    </ton_athena_schema>
+
+    <ton_athena_schema>
+    CREATE EXTERNAL TABLE `jetton_events`(
+      `type` string, 
+      `tx_hash` string, 
+      `tx_lt` bigint, 
+      `utime` int, 
+      `trace_id` string, 
+      `tx_aborted` bool, 
+      `amount` decimal(38,0), 
+      `source` string, 
+      `destination` string, 
+      `jetton_master` string, 
+      `comment` string)
+    PARTITIONED BY ( 
+      `date` string)
+    ROW FORMAT SERDE 
+      'org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe' 
+    STORED AS INPUTFORMAT 
+      'org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat' 
+    OUTPUTFORMAT 
+      'org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat'
+    LOCATION
+      's3://ton-blockchain-private-datalake-us-east-1-parquet/v1.1/ton/jetton_events'
+    TBLPROPERTIES (
+    )
+    </ton_athena_schema>
+
+    <ton_athena_schema>
+    CREATE EXTERNAL TABLE `jetton_metadata`(
+      `address` string, 
+      `admin_address` string, 
+      `symbol` string, 
+      `name` string, 
+      `description` string, 
+      `decimals` int)
+    PARTITIONED BY ( 
+      `date` string)
+    ROW FORMAT SERDE 
+      'org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe' 
+    STORED AS INPUTFORMAT 
+      'org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat' 
+    OUTPUTFORMAT 
+      'org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat'
+    LOCATION
+      's3://ton-blockchain-private-datalake-us-east-1-parquet/v1.1/ton/jetton_metadata'
+    TBLPROPERTIES (
+    )
+    </ton_athena_schema>
+
+    <ton_athena_schema>
+    CREATE EXTERNAL TABLE `messages`(
+      `tx_hash` string, 
+      `tx_lt` bigint, 
+      `tx_now` int, 
+      `msg_hash` string, 
+      `direction` string, 
+      `trace_id` string, 
+      `source` string, 
+      `destination` string, 
+      `value` bigint, 
+      `fwd_fee` bigint, 
+      `opcode` int, 
+      `comment` string)
+    PARTITIONED BY ( 
+      `date` string)
+    ROW FORMAT SERDE 
+      'org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe' 
+    STORED AS INPUTFORMAT 
+      'org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat' 
+    OUTPUTFORMAT 
+      'org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat'
+    LOCATION
+      's3://ton-blockchain-private-datalake-us-east-1-parquet/v1.1/ton/messages'
+    TBLPROPERTIES (
+    )
+
+    </ton_athena_schema>
+
+    <ton_athena_schema>
+    CREATE EXTERNAL TABLE `nft_events`(
+      `type` string, 
+      `nft_item_address` string, 
+      `collection_address` string, 
+      `owner_address` string, 
+      `content_onchain` string, 
+      `timestamp` int, 
+      `tx_hash` string, 
+      `trace_id` string, 
+      `prev_owner` string, 
+      `comment` string, 
+      `sale_type` string, 
+      `marketplace_address` string, 
+      `sale_price` decimal(38,0), 
+      `marketplace_fee` decimal(38,0))
+    PARTITIONED BY ( 
+      `date` string)
+    ROW FORMAT SERDE 
+      'org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe' 
+    STORED AS INPUTFORMAT 
+      'org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat' 
+    OUTPUTFORMAT 
+      'org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat'
+    LOCATION
+      's3://ton-blockchain-private-datalake-us-east-1-parquet/v1.1/ton/nft_events'
+    TBLPROPERTIES (
+    )
+    </ton_athena_schema>
+
+    <ton_athena_schema>
+    CREATE EXTERNAL TABLE `nft_metadata`(
+      `type` string, 
+      `address` string, 
+      `name` string, 
+      `description` string, 
+      `image` string, 
+      `attributes` string)
+    PARTITIONED BY ( 
+      `date` string)
+    ROW FORMAT SERDE 
+      'org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe' 
+    STORED AS INPUTFORMAT 
+      'org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat' 
+    OUTPUTFORMAT 
+      'org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat'
+    LOCATION
+      's3://ton-blockchain-private-datalake-us-east-1-parquet/v1.1/ton/nft_metadata'
+    TBLPROPERTIES (
+    )
+    </ton_athena_schema>
+
+    <ton_athena_schema>
+    CREATE EXTERNAL TABLE `transactions`(
+      `account` string, 
+      `hash` string, 
+      `lt` bigint, 
+      `block_workchain` int, 
+      `block_shard` int, 
+      `block_seqno` int, 
+      `mc_block_seqno` int, 
+      `trace_id` string, 
+      `now` int, 
+      `orig_status` string, 
+      `end_status` string, 
+      `total_fees` bigint, 
+      `aborted` bool, 
+      `is_tock` bool, 
+      `compute_exit_code` int, 
+      `action_result_code` int)
+    PARTITIONED BY ( 
+      `date` string)
+    ROW FORMAT SERDE 
+      'org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe' 
+    STORED AS INPUTFORMAT 
+      'org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat' 
+    OUTPUTFORMAT 
+      'org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat'
+    LOCATION
+      's3://ton-blockchain-private-datalake-us-east-1-parquet/v1.1/ton/transactions'
+    TBLPROPERTIES (
+    )
+    </ton_athena_schema>
+  </ton_athena_schemas>
+  
+
+Here are examples of Amazon Athena queries for the TON Database <ton_athena_examples>.   Always convert TON amounts to human-readable representation by dividing it by 1e9
+Try to convert addresses into names using nft_metadata and jetton_metadata. 
+When dealing with metadata tables first extract the latest values for each address.
+NFT events types:
+- put_on_sale - NFT is put on sale via sale contract
+- mint - Tx related to the NFT deployment
+- cancel_sale - Sale is cancelled and NFT is returned to the owner
+- transfer - Direct NFT transfer between addresses. Also includes automatic transfers of TON DNS in case of expiration.
+- bid - New bid for an auction
+
+  <ton_athena_examples>
+
+  <ton_athena_example>
+  SELECT * from ton.blocks where date='2024-03-11'
+  </ton_athena_example>
+
+  <ton_athena_example>
+  SELECT sum(sale_price)/1e9 as total_volume_ton from ton.blocks where date='2024-03-11'
+  and type = 'sale'
+  </ton_athena_example>
+
+  <ton_athena_example>
+    with latest_metadata as (
+    select address, type, max_by(name, date) as name
+    from nft_metadata
+    group by 1, 2
+  )
+  SELECT ne.*, coalesce(nm1.name, ne.nft_item_address) as item,
+  coalesce(nm2.name, ne.collection_address) as collection
+  FROM ton.nft_events ne
+  join latest_metadata nm1 on nm1.address =  nft_item_address  and nm1.type = 'item'
+  join latest_metadata nm2 on nm2.address =  collection_address  and nm2.type = 'collection'
+  ORDER BY timestamp DESC
+  LIMIT 100
+  </ton_athena_example>
+</ton_athena_examples>
+
 <join_bitcoin_ethereum_athena_examples>
   <union_athena_example>
     (SELECT 'BTC' AS chain, number AS block, timestamp FROM btc.blocks WHERE
