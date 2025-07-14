@@ -1185,7 +1185,7 @@ Resources:
           dStr = '%s-%02d-%02d' % (d.year, d.month, d.day)
           print('dStr=%s' % dStr)
 
-          def processPrefix(PREFIX, DATABASE_NAME, TABLE_NAME, existingPartList, SCHEMA_VERSION=SCHEMA_VERSION):
+          def processPrefix(PREFIX, DATABASE_NAME, TABLE_NAME, existingPartList):
               print('processPrefix:%s' % PREFIX)
               fStart = PREFIX.replace('/', '-')
               # get folders
@@ -1265,7 +1265,7 @@ Resources:
                       TableName=table,
                       PartitionsToDelete=to_delete)
 
-          def get_and_delete_partitions(database, table0, deleteFirst):
+          def get_and_delete_partitions(database, table0, deleteFirst, SCHEMA_VERSION=SCHEMA_VERSION):
               table = table0
 
               paginator = glue_client.get_paginator('get_partitions')
