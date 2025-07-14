@@ -3,10 +3,6 @@ Parameters:
     Description: The S3 bucket with the AWS Public Blockchain Data
     Type: String
     Default: "aws-public-blockchain"
-  S3BucketTON:
-    Description: The S3 bucket with the AWS Public Blockchain Data
-    Type: String
-    Default: "ton-blockchain-private-datalake-us-east-1-parquet"
   SchemaVersion:
     Type: String
     Default: "v1.0"
@@ -630,7 +626,7 @@ Resources:
           Location: !Join
             - ""
             - - s3://
-              - !Ref S3BucketTON
+              - !Ref S3Bucket
               - /
               - !Ref SchemaVersionTON
               - /ton/blocks
@@ -696,7 +692,7 @@ Resources:
           Location: !Join
             - ""
             - - s3://
-              - !Ref S3BucketTON
+              - !Ref S3Bucket
               - /
               - !Ref SchemaVersionTON
               - /ton/transactions
@@ -754,7 +750,7 @@ Resources:
           Location: !Join
             - ""
             - - s3://
-              - !Ref S3BucketTON
+              - !Ref S3Bucket
               - /
               - !Ref SchemaVersionTON
               - /ton/messages
@@ -810,7 +806,7 @@ Resources:
           Location: !Join
             - ""
             - - s3://
-              - !Ref S3BucketTON
+              - !Ref S3Bucket
               - /
               - !Ref SchemaVersionTON
               - /ton/jetton_events
@@ -856,7 +852,7 @@ Resources:
           Location: !Join
             - ""
             - - s3://
-              - !Ref S3BucketTON
+              - !Ref S3Bucket
               - /
               - !Ref SchemaVersionTON
               - /ton/jetton_metadata
@@ -918,7 +914,7 @@ Resources:
           Location: !Join
             - ""
             - - s3://
-              - !Ref S3BucketTON
+              - !Ref S3Bucket
               - /
               - !Ref SchemaVersionTON
               - /ton/nft_events
@@ -964,7 +960,7 @@ Resources:
           Location: !Join
             - ""
             - - s3://
-              - !Ref S3BucketTON
+              - !Ref S3Bucket
               - /
               - !Ref SchemaVersionTON
               - /ton/nft_metadata
@@ -1024,7 +1020,7 @@ Resources:
           Location: !Join
             - ""
             - - s3://
-              - !Ref S3BucketTON
+              - !Ref S3Bucket
               - /
               - !Ref SchemaVersionTON
               - /ton/dex_trades
@@ -1070,7 +1066,6 @@ Resources:
             Resource:
               - arn:aws:ssm:*:*:parameter/public-blockchain-bucket
               - arn:aws:ssm:*:*:parameter/public-blockchain-schema-version
-              - arn:aws:ssm:*:*:parameter/public-blockchain-bucket-ton
               - arn:aws:ssm:*:*:parameter/public-blockchain-schema-version-ton
           - Sid: S3
             Effect: Allow
@@ -1078,13 +1073,6 @@ Resources:
             Resource:
               - !Sub
                 - arn:aws:s3:::${S3Bucket}
-                - S3Bucket: !Ref "S3Bucket"
-          - Sid: S3TON
-            Effect: Allow
-            Action: s3:ListBucket
-            Resource:
-              - !Sub
-                - arn:aws:s3:::${S3BucketTON}
                 - S3Bucket: !Ref "S3Bucket"
 
   LambdaExecutionRole:
@@ -1137,14 +1125,6 @@ Resources:
       Type: String
       Value: !Ref SchemaVersion
 
-  BucketNameParamaterTON:
-    Type: AWS::SSM::Parameter
-    Properties:
-      Description: AWS Public Blockchain S3 bucket
-      Name: public-blockchain-bucket-ton
-      Type: String
-      Value: !Ref S3BucketTON
-
   SchemaVersionParamaterTON:
     Type: AWS::SSM::Parameter
     Properties:
@@ -1196,8 +1176,6 @@ Resources:
           parameter = ssm.get_parameter(Name='public-blockchain-schema-version', WithDecryption=True)
           SCHEMA_VERSION = parameter['Parameter']['Value']
 
-          parameter = ssm.get_parameter(Name='public-blockchain-bucket-ton', WithDecryption=True)
-          S3_BUCKET_TON = parameter['Parameter']['Value']
           parameter = ssm.get_parameter(Name='public-blockchain-schema-version-ton', WithDecryption=True)
           SCHEMA_VERSION_TON = parameter['Parameter']['Value']
 
@@ -1207,7 +1185,7 @@ Resources:
           dStr = '%s-%02d-%02d' % (d.year, d.month, d.day)
           print('dStr=%s' % dStr)
 
-          def processPrefix(PREFIX, DATABASE_NAME, TABLE_NAME, existingPartList, S3_BUCKET=S3_BUCKET, SCHEMA_VERSION=SCHEMA_VERSION):
+          def processPrefix(PREFIX, DATABASE_NAME, TABLE_NAME, existingPartList, SCHEMA_VERSION=SCHEMA_VERSION):
               print('processPrefix:%s' % PREFIX)
               fStart = PREFIX.replace('/', '-')
               # get folders
@@ -1317,14 +1295,14 @@ Resources:
               get_and_delete_partitions('eth', 'contracts', flag)
               get_and_delete_partitions('eth', 'logs', flag)
 
-              get_and_delete_partitions('ton', 'blocks', flag, S3_BUCKET_TON, SCHEMA_VERSION_TON)
-              get_and_delete_partitions('ton', 'transactions', flag, S3_BUCKET_TON, SCHEMA_VERSION_TON)
-              get_and_delete_partitions('ton', 'messages', flag, S3_BUCKET_TON, SCHEMA_VERSION_TON)
-              get_and_delete_partitions('ton', 'jetton_events', flag, S3_BUCKET_TON, SCHEMA_VERSION_TON)
-              get_and_delete_partitions('ton', 'jetton_metadata', flag, S3_BUCKET_TON, SCHEMA_VERSION_TON)
-              get_and_delete_partitions('ton', 'nft_events', flag, S3_BUCKET_TON, SCHEMA_VERSION_TON)
-              get_and_delete_partitions('ton', 'nft_metadata', flag, S3_BUCKET_TON, SCHEMA_VERSION_TON)
-              get_and_delete_partitions('ton', 'dex_trades', flag, S3_BUCKET_TON, SCHEMA_VERSION_TON)
+              get_and_delete_partitions('ton', 'blocks', flag, SCHEMA_VERSION_TON)
+              get_and_delete_partitions('ton', 'transactions', flag, SCHEMA_VERSION_TON)
+              get_and_delete_partitions('ton', 'messages', flag, SCHEMA_VERSION_TON)
+              get_and_delete_partitions('ton', 'jetton_events', flag, SCHEMA_VERSION_TON)
+              get_and_delete_partitions('ton', 'jetton_metadata', flag, SCHEMA_VERSION_TON)
+              get_and_delete_partitions('ton', 'nft_events', flag, SCHEMA_VERSION_TON)
+              get_and_delete_partitions('ton', 'nft_metadata', flag, SCHEMA_VERSION_TON)
+              get_and_delete_partitions('ton', 'dex_trades', flag, SCHEMA_VERSION_TON)
       Handler: index.handler
       Role: !GetAtt LambdaExecutionRole.Arn
       Runtime: python3.9

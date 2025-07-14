@@ -388,7 +388,7 @@ AND lower(token_address) = lower('0x514910771AF9Ca656af840dff83E8264EcF986CA')
     OUTPUTFORMAT 
       'org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat'
     LOCATION
-      's3://ton-blockchain-private-datalake-us-east-1-parquet/v1.1/ton/blocks'
+      's3://aws-public-blockchain/v1.1/ton/blocks'
     TBLPROPERTIES (
     )
     </ton_athena_schema>
@@ -401,7 +401,6 @@ AND lower(token_address) = lower('0x514910771AF9Ca656af840dff83E8264EcF986CA')
       `trace_id` string, 
       `project_type` string, 
       `project` string, 
-      `event_time` int, 
       `event_type` string, 
       `trader_address` string, 
       `pool_address` string, 
@@ -419,7 +418,7 @@ AND lower(token_address) = lower('0x514910771AF9Ca656af840dff83E8264EcF986CA')
     OUTPUTFORMAT 
       'org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat'
     LOCATION
-      's3://ton-blockchain-private-datalake-us-east-1-parquet/v1.1/ton/dex_trades'
+      's3://aws-public-blockchain/v1.1/ton/dex_trades'
     TBLPROPERTIES (
     )
 
@@ -447,7 +446,7 @@ AND lower(token_address) = lower('0x514910771AF9Ca656af840dff83E8264EcF986CA')
     OUTPUTFORMAT 
       'org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat'
     LOCATION
-      's3://ton-blockchain-private-datalake-us-east-1-parquet/v1.1/ton/jetton_events'
+      's3://aws-public-blockchain/v1.1/ton/jetton_events'
     TBLPROPERTIES (
     )
     </ton_athena_schema>
@@ -469,7 +468,7 @@ AND lower(token_address) = lower('0x514910771AF9Ca656af840dff83E8264EcF986CA')
     OUTPUTFORMAT 
       'org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat'
     LOCATION
-      's3://ton-blockchain-private-datalake-us-east-1-parquet/v1.1/ton/jetton_metadata'
+      's3://aws-public-blockchain/v1.1/ton/jetton_metadata'
     TBLPROPERTIES (
     )
     </ton_athena_schema>
@@ -497,7 +496,7 @@ AND lower(token_address) = lower('0x514910771AF9Ca656af840dff83E8264EcF986CA')
     OUTPUTFORMAT 
       'org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat'
     LOCATION
-      's3://ton-blockchain-private-datalake-us-east-1-parquet/v1.1/ton/messages'
+      's3://aws-public-blockchain/v1.1/ton/messages'
     TBLPROPERTIES (
     )
 
@@ -528,7 +527,7 @@ AND lower(token_address) = lower('0x514910771AF9Ca656af840dff83E8264EcF986CA')
     OUTPUTFORMAT 
       'org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat'
     LOCATION
-      's3://ton-blockchain-private-datalake-us-east-1-parquet/v1.1/ton/nft_events'
+      's3://aws-public-blockchain/v1.1/ton/nft_events'
     TBLPROPERTIES (
     )
     </ton_athena_schema>
@@ -550,7 +549,7 @@ AND lower(token_address) = lower('0x514910771AF9Ca656af840dff83E8264EcF986CA')
     OUTPUTFORMAT 
       'org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat'
     LOCATION
-      's3://ton-blockchain-private-datalake-us-east-1-parquet/v1.1/ton/nft_metadata'
+      's3://aws-public-blockchain/v1.1/ton/nft_metadata'
     TBLPROPERTIES (
     )
     </ton_athena_schema>
@@ -582,7 +581,7 @@ AND lower(token_address) = lower('0x514910771AF9Ca656af840dff83E8264EcF986CA')
     OUTPUTFORMAT 
       'org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat'
     LOCATION
-      's3://ton-blockchain-private-datalake-us-east-1-parquet/v1.1/ton/transactions'
+      's3://aws-public-blockchain/v1.1/ton/transactions'
     TBLPROPERTIES (
     )
     </ton_athena_schema>
@@ -598,6 +597,9 @@ NFT events types:
 - cancel_sale - Sale is cancelled and NFT is returned to the owner
 - transfer - Direct NFT transfer between addresses. Also includes automatic transfers of TON DNS in case of expiration.
 - bid - New bid for an auction
+
+Use jetton_metadata table to resolve token name into address.
+
 
   <ton_athena_examples>
 
@@ -621,9 +623,18 @@ NFT events types:
   FROM ton.nft_events ne
   join latest_metadata nm1 on nm1.address =  nft_item_address  and nm1.type = 'item'
   join latest_metadata nm2 on nm2.address =  collection_address  and nm2.type = 'collection'
-  ORDER BY timestamp DESC
+  where date='2025-03-11'
   LIMIT 100
   </ton_athena_example>
+
+  <ton_athena_example>
+  SELECT 
+ SUM(volume_usd) AS total_volume
+FROM ton.dex_trades
+WHERE 
+cast(date as date) >= now() - interval '30' day
+  </ton_athena_example>
+
 </ton_athena_examples>
 
 <join_bitcoin_ethereum_athena_examples>
