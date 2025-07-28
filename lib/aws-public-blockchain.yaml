@@ -6,6 +6,9 @@ Parameters:
   SchemaVersion:
     Type: String
     Default: "v1.0"
+  SchemaVersionTON:
+    Type: String
+    Default: "v1.1"
 Resources:
   AthenaResultsBucket:
     Type: AWS::S3::Bucket
@@ -74,6 +77,13 @@ Resources:
       CatalogId: !Ref AWS::AccountId
       DatabaseInput:
         Name: eth
+
+  GlueDatabaseTON:
+    Type: AWS::Glue::Database
+    Properties:
+      CatalogId: !Ref AWS::AccountId
+      DatabaseInput:
+        Name: ton
 
   GlueTableBlocksBTC:
     Type: AWS::Glue::Table
@@ -579,6 +589,456 @@ Resources:
             Type: string
         TableType: EXTERNAL_TABLE
 
+  GlueTableBlocksTON:
+    Type: AWS::Glue::Table
+    Properties:
+      CatalogId: !Ref AWS::AccountId
+      DatabaseName: !Ref GlueDatabaseTON
+      TableInput:
+        Owner: owner
+        Retention: 0
+        Name: blocks
+        StorageDescriptor:
+          Columns:
+            - Name: workchain
+              Type: int
+            - Name: shard
+              Type: bigint
+            - Name: seqno
+              Type: int
+            - Name: root_hash
+              Type: string
+            - Name: file_hash
+              Type: string
+            - Name: mc_block_workchain
+              Type: int
+            - Name: mc_block_shard
+              Type: bigint
+            - Name: mc_block_seqno
+              Type: int
+            - Name: gen_utime
+              Type: int
+            - Name: created_by
+              Type: string
+            - Name: tx_count
+              Type: int
+          InputFormat: org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat
+          Location: !Join
+            - ""
+            - - s3://
+              - !Ref S3Bucket
+              - /
+              - !Ref SchemaVersionTON
+              - /ton/blocks
+          OutputFormat: org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat
+          Compressed: false
+          NumberOfBuckets: -1
+          SerdeInfo:
+            SerializationLibrary: org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe
+            Parameters:
+              serialization.format: "1"
+          BucketColumns: []
+          SortColumns: []
+          StoredAsSubDirectories: false
+        PartitionKeys:
+          - Name: date
+            Type: string
+        TableType: EXTERNAL_TABLE
+
+  GlueTableTransactionsTON:
+    Type: AWS::Glue::Table
+    Properties:
+      CatalogId: !Ref AWS::AccountId
+      DatabaseName: !Ref GlueDatabaseTON
+      TableInput:
+        Owner: owner
+        Retention: 0
+        Name: transactions
+        StorageDescriptor:
+          Columns:
+            - Name: account
+              Type: string
+            - Name: hash
+              Type: string
+            - Name: lt
+              Type: bigint
+            - Name: block_workchain
+              Type: int
+            - Name: block_shard
+              Type: int
+            - Name: block_seqno
+              Type: int
+            - Name: mc_block_seqno
+              Type: int
+            - Name: trace_id
+              Type: string
+            - Name: now
+              Type: int
+            - Name: orig_status
+              Type: string
+            - Name: end_status
+              Type: string
+            - Name: total_fees
+              Type: bigint
+            - Name: aborted
+              Type: bool
+            - Name: is_tock
+              Type: bool
+            - Name: compute_exit_code
+              Type: int
+            - Name: action_result_code
+              Type: int
+          InputFormat: org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat
+          Location: !Join
+            - ""
+            - - s3://
+              - !Ref S3Bucket
+              - /
+              - !Ref SchemaVersionTON
+              - /ton/transactions
+          OutputFormat: org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat
+          Compressed: false
+          NumberOfBuckets: -1
+          SerdeInfo:
+            SerializationLibrary: org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe
+            Parameters:
+              serialization.format: "1"
+          BucketColumns: []
+          SortColumns: []
+          StoredAsSubDirectories: false
+        PartitionKeys:
+          - Name: date
+            Type: string
+        TableType: EXTERNAL_TABLE
+
+  GlueTableMessagesTON:
+    Type: AWS::Glue::Table
+    Properties:
+      CatalogId: !Ref AWS::AccountId
+      DatabaseName: !Ref GlueDatabaseTON
+      TableInput:
+        Owner: owner
+        Retention: 0
+        Name: messages
+        StorageDescriptor:
+          Columns:
+            - Name: tx_hash
+              Type: string
+            - Name: tx_lt
+              Type: bigint
+            - Name: tx_now
+              Type: int
+            - Name: msg_hash
+              Type: string
+            - Name: direction
+              Type: string
+            - Name: trace_id
+              Type: string
+            - Name: source
+              Type: string
+            - Name: destination
+              Type: string
+            - Name: value
+              Type: bigint
+            - Name: fwd_fee
+              Type: bigint
+            - Name: opcode
+              Type: int
+            - Name: comment
+              Type: string
+          InputFormat: org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat
+          Location: !Join
+            - ""
+            - - s3://
+              - !Ref S3Bucket
+              - /
+              - !Ref SchemaVersionTON
+              - /ton/messages
+          OutputFormat: org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat
+          Compressed: false
+          NumberOfBuckets: -1
+          SerdeInfo:
+            SerializationLibrary: org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe
+            Parameters:
+              serialization.format: "1"
+          BucketColumns: []
+          SortColumns: []
+          StoredAsSubDirectories: false
+        PartitionKeys:
+          - Name: date
+            Type: string
+        TableType: EXTERNAL_TABLE
+
+  GlueTableJettonEventsTON:
+    Type: AWS::Glue::Table
+    Properties:
+      CatalogId: !Ref AWS::AccountId
+      DatabaseName: !Ref GlueDatabaseTON
+      TableInput:
+        Owner: owner
+        Retention: 0
+        Name: jetton_events
+        StorageDescriptor:
+          Columns:
+            - Name: type
+              Type: string
+            - Name: tx_hash
+              Type: string
+            - Name: tx_lt
+              Type: bigint
+            - Name: utime
+              Type: int
+            - Name: trace_id
+              Type: string
+            - Name: tx_aborted
+              Type: bool
+            - Name: amount
+              Type: decimal(38,0) 
+            - Name: source
+              Type: string
+            - Name: destination
+              Type: string
+            - Name: jetton_master
+              Type: string
+            - Name: comment
+              Type: string
+          InputFormat: org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat
+          Location: !Join
+            - ""
+            - - s3://
+              - !Ref S3Bucket
+              - /
+              - !Ref SchemaVersionTON
+              - /ton/jetton_events
+          OutputFormat: org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat
+          Compressed: false
+          NumberOfBuckets: -1
+          SerdeInfo:
+            SerializationLibrary: org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe
+            Parameters:
+              serialization.format: "1"
+          BucketColumns: []
+          SortColumns: []
+          StoredAsSubDirectories: false
+        PartitionKeys:
+          - Name: date
+            Type: string
+        TableType: EXTERNAL_TABLE
+
+  GlueTableJettonMetadataTON:
+    Type: AWS::Glue::Table
+    Properties:
+      CatalogId: !Ref AWS::AccountId
+      DatabaseName: !Ref GlueDatabaseTON
+      TableInput:
+        Owner: owner
+        Retention: 0
+        Name: jetton_metadata
+        StorageDescriptor:
+          Columns:
+            - Name: address
+              Type: string
+            - Name: admin_address
+              Type: string
+            - Name: symbol
+              Type: string
+            - Name: name
+              Type: string
+            - Name: description
+              Type: string
+            - Name: decimals
+              Type: int
+          InputFormat: org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat
+          Location: !Join
+            - ""
+            - - s3://
+              - !Ref S3Bucket
+              - /
+              - !Ref SchemaVersionTON
+              - /ton/jetton_metadata
+          OutputFormat: org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat
+          Compressed: false
+          NumberOfBuckets: -1
+          SerdeInfo:
+            SerializationLibrary: org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe
+            Parameters:
+              serialization.format: "1"
+          BucketColumns: []
+          SortColumns: []
+          StoredAsSubDirectories: false
+        PartitionKeys:
+          - Name: date
+            Type: string
+        TableType: EXTERNAL_TABLE
+
+  GlueTableNFTEventsTON:
+    Type: AWS::Glue::Table
+    Properties:
+      CatalogId: !Ref AWS::AccountId
+      DatabaseName: !Ref GlueDatabaseTON
+      TableInput:
+        Owner: owner
+        Retention: 0
+        Name: nft_events
+        StorageDescriptor:
+          Columns:
+            - Name: type
+              Type: string
+            - Name: nft_item_address
+              Type: string
+            - Name: collection_address
+              Type: string
+            - Name: owner_address
+              Type: string
+            - Name: content_onchain
+              Type: string
+            - Name: timestamp
+              Type: int
+            - Name: tx_hash
+              Type: string
+            - Name: trace_id
+              Type: string
+            - Name: prev_owner
+              Type: string
+            - Name: comment
+              Type: string
+            - Name: sale_type
+              Type: string
+            - Name: marketplace_address
+              Type: string
+            - Name: sale_price
+              Type: decimal(38,0)
+            - Name: marketplace_fee
+              Type: decimal(38,0)
+          InputFormat: org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat
+          Location: !Join
+            - ""
+            - - s3://
+              - !Ref S3Bucket
+              - /
+              - !Ref SchemaVersionTON
+              - /ton/nft_events
+          OutputFormat: org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat
+          Compressed: false
+          NumberOfBuckets: -1
+          SerdeInfo:
+            SerializationLibrary: org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe
+            Parameters:
+              serialization.format: "1"
+          BucketColumns: []
+          SortColumns: []
+          StoredAsSubDirectories: false
+        PartitionKeys:
+          - Name: date
+            Type: string
+        TableType: EXTERNAL_TABLE
+
+  GlueTableNFTMetadataTON:
+    Type: AWS::Glue::Table
+    Properties:
+      CatalogId: !Ref AWS::AccountId
+      DatabaseName: !Ref GlueDatabaseTON
+      TableInput:
+        Owner: owner
+        Retention: 0
+        Name: nft_metadata
+        StorageDescriptor:
+          Columns:
+            - Name: type
+              Type: string
+            - Name: address
+              Type: string
+            - Name: name
+              Type: string
+            - Name: description
+              Type: string
+            - Name: image
+              Type: string
+            - Name: attributes
+              Type: string
+          InputFormat: org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat
+          Location: !Join
+            - ""
+            - - s3://
+              - !Ref S3Bucket
+              - /
+              - !Ref SchemaVersionTON
+              - /ton/nft_metadata
+          OutputFormat: org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat
+          Compressed: false
+          NumberOfBuckets: -1
+          SerdeInfo:
+            SerializationLibrary: org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe
+            Parameters:
+              serialization.format: "1"
+          BucketColumns: []
+          SortColumns: []
+          StoredAsSubDirectories: false
+        PartitionKeys:
+          - Name: date
+            Type: string
+        TableType: EXTERNAL_TABLE
+
+  GlueTableDEXTradesTON:
+    Type: AWS::Glue::Table
+    Properties:
+      CatalogId: !Ref AWS::AccountId
+      DatabaseName: !Ref GlueDatabaseTON
+      TableInput:
+        Owner: owner
+        Retention: 0
+        Name: dex_trades
+        StorageDescriptor:
+          Columns:
+            - Name: tx_hash
+              Type: string
+            - Name: trace_id
+              Type: string
+            - Name: project_type
+              Type: string
+            - Name: project
+              Type: string
+            - Name: event_time
+              Type: int
+            - Name: event_type
+              Type: string
+            - Name: trader_address
+              Type: string
+            - Name: pool_address
+              Type: string
+            - Name: token_sold_address
+              Type: string
+            - Name: token_bought_address
+              Type: string
+            - Name: amount_sold_raw
+              Type: decimal(38,0)
+            - Name: amount_bought_raw
+              Type: decimal(38,0)
+            - Name: volume_usd
+              Type: decimal(20,6)
+          InputFormat: org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat
+          Location: !Join
+            - ""
+            - - s3://
+              - !Ref S3Bucket
+              - /
+              - !Ref SchemaVersionTON
+              - /ton/dex_trades
+          OutputFormat: org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat
+          Compressed: false
+          NumberOfBuckets: -1
+          SerdeInfo:
+            SerializationLibrary: org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe
+            Parameters:
+              serialization.format: "1"
+          BucketColumns: []
+          SortColumns: []
+          StoredAsSubDirectories: false
+        PartitionKeys:
+          - Name: date
+            Type: string
+        TableType: EXTERNAL_TABLE
+
   LambdaAccessPolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
@@ -596,14 +1056,17 @@ Resources:
               - arn:aws:glue:*:*:catalog
               - arn:aws:glue:*:*:database/btc
               - arn:aws:glue:*:*:database/eth
+              - arn:aws:glue:*:*:database/ton
               - arn:aws:glue:*:*:table/btc/*
               - arn:aws:glue:*:*:table/eth/*
+              - arn:aws:glue:*:*:table/ton/*
           - Sid: SSM
             Effect: Allow
             Action: ssm:GetParameter
             Resource:
               - arn:aws:ssm:*:*:parameter/public-blockchain-bucket
               - arn:aws:ssm:*:*:parameter/public-blockchain-schema-version
+              - arn:aws:ssm:*:*:parameter/public-blockchain-schema-version-ton
           - Sid: S3
             Effect: Allow
             Action: s3:ListBucket
@@ -662,6 +1125,15 @@ Resources:
       Type: String
       Value: !Ref SchemaVersion
 
+  SchemaVersionParamaterTON:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Description: AWS Public Blockchain Schema Version
+      Name: public-blockchain-schema-version-ton
+      Type: String
+      Value: !Ref SchemaVersionTON
+
+
   LambdaSyncPartitions:
     Type: AWS::Lambda::Function
     DependsOn:
@@ -673,6 +1145,14 @@ Resources:
       - GlueTableContractsETH
       - GlueTableTracesETH
       - GlueTableTokenTransfersETH
+      - GlueTableBlocksTON
+      - GlueTableTransactionsTON
+      - GlueTableMessagesTON
+      - GlueTableJettonEventsTON
+      - GlueTableJettonMetadataTON
+      - GlueTableNFTEventsTON
+      - GlueTableNFTMetadataTON
+      - GlueTableDEXTradesTON
       - BucketNameParamater
       - SchemaVersionParamater
     Properties:
@@ -695,6 +1175,9 @@ Resources:
           S3_BUCKET = parameter['Parameter']['Value']
           parameter = ssm.get_parameter(Name='public-blockchain-schema-version', WithDecryption=True)
           SCHEMA_VERSION = parameter['Parameter']['Value']
+
+          parameter = ssm.get_parameter(Name='public-blockchain-schema-version-ton', WithDecryption=True)
+          SCHEMA_VERSION_TON = parameter['Parameter']['Value']
 
           flag = False
 
@@ -782,7 +1265,7 @@ Resources:
                       TableName=table,
                       PartitionsToDelete=to_delete)
 
-          def get_and_delete_partitions(database, table0, deleteFirst):
+          def get_and_delete_partitions(database, table0, deleteFirst, SCHEMA_VERSION=SCHEMA_VERSION):
               table = table0
 
               paginator = glue_client.get_paginator('get_partitions')
@@ -811,10 +1294,21 @@ Resources:
               get_and_delete_partitions('eth', 'traces', flag)
               get_and_delete_partitions('eth', 'contracts', flag)
               get_and_delete_partitions('eth', 'logs', flag)
+
+              get_and_delete_partitions('ton', 'blocks', flag, SCHEMA_VERSION_TON)
+              get_and_delete_partitions('ton', 'transactions', flag, SCHEMA_VERSION_TON)
+              get_and_delete_partitions('ton', 'messages', flag, SCHEMA_VERSION_TON)
+              get_and_delete_partitions('ton', 'jetton_events', flag, SCHEMA_VERSION_TON)
+              get_and_delete_partitions('ton', 'jetton_metadata', flag, SCHEMA_VERSION_TON)
+              get_and_delete_partitions('ton', 'nft_events', flag, SCHEMA_VERSION_TON)
+              get_and_delete_partitions('ton', 'nft_metadata', flag, SCHEMA_VERSION_TON)
+              get_and_delete_partitions('ton', 'dex_trades', flag, SCHEMA_VERSION_TON)
       Handler: index.handler
       Role: !GetAtt LambdaExecutionRole.Arn
       Runtime: python3.9
       Timeout: 900
+
+
 
   LambdaInvoker:
     Type: AWS::Lambda::Function

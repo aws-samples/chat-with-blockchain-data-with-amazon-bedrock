@@ -1,5 +1,5 @@
 # Bedrock Blockchain Data Agent
-This repository demonstrates how Amazon Bedrock Agents can be used to enable natural language queries of Bitcoin and Ethereum blockchain data. For example, it can provide responses to questions like:
+This repository demonstrates how Amazon Bedrock Agents can be used to enable natural language queries of Bitcoin,  Ethereum and TON blockchain data. For example, it can provide responses to questions like:
 * how many transactions happened on Bitcoin yesterday?
 * how much USDC was transferred last week?
 
@@ -77,6 +77,14 @@ Now that the CDK stack has been deployed, you can test it within the Bedrock con
 7. what are various reward_types of ethereum transactions
 8. how many uncle transactions were on ethereum in the past week
 9. how many uncle transactions happened on ethereum on august 1 2022
+
+**TON Questions**
+
+1. Show the names of top-5 NFT collections on TON during the last 30 days by number of traders
+2. What is the most expensive NFT being sold on TON during the previous week?
+3. What is the address of USD₮ jetton on TON? To avoid fake jettons return the address
+of token which has trading volume and that volume is top-1
+4. What is the average daily trading volume in USD₮/USDe pair on DEXs?
 
 
 ### Architecture
