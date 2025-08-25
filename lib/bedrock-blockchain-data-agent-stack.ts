@@ -5,7 +5,7 @@ import { Construct } from 'constructs';
 import * as athena from 'aws-cdk-lib/aws-athena';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as iam from 'aws-cdk-lib/aws-iam';
-import * as lambda from '@aws-cdk/aws-lambda-python-alpha';
+import * as lambda from 'aws-cdk-lib/aws-lambda';
 import { bedrock } from '@cdklabs/generative-ai-cdk-constructs';
 import * as path from 'path';
 import { CfnInclude } from 'aws-cdk-lib/cloudformation-include';
@@ -66,12 +66,12 @@ export class BedrockBlockchainDataAgentStack extends cdk.Stack {
       }
     });
 
-    const actionGroupFunction = new lambda.PythonFunction(this, 'ActionGroupFunction', {
-      runtime: cdk.aws_lambda.Runtime.PYTHON_3_12,
-      entry: path.join(__dirname, './lambda/bedrock-agent-txtsql-action'),
-      handler: 'lambda_handler',
+    const actionGroupFunction = new lambda.Function(this, 'ActionGroupFunction', {
+      runtime: lambda.Runtime.PYTHON_3_12,
+      handler: 'index.lambda_handler',
+      code: lambda.Code.fromAsset(path.join(__dirname, './lambda/bedrock-agent-txtsql-action')),
       timeout: cdk.Duration.seconds(300),
-      environment: { // Optional: Set environment variables for the function
+      environment: {
         ATHENA_QUERY_RESULTS_BUCKET_NAME: athenaBucket.bucketName,
       },
     });

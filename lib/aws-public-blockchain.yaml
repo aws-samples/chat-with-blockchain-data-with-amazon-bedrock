@@ -681,9 +681,9 @@ Resources:
             - Name: total_fees
               Type: bigint
             - Name: aborted
-              Type: bool
+              Type: boolean
             - Name: is_tock
-              Type: bool
+              Type: boolean
             - Name: compute_exit_code
               Type: int
             - Name: action_result_code
@@ -791,7 +791,7 @@ Resources:
             - Name: trace_id
               Type: string
             - Name: tx_aborted
-              Type: bool
+              Type: boolean
             - Name: amount
               Type: decimal(38,0) 
             - Name: source

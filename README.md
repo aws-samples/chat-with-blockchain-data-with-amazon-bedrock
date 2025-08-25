@@ -23,8 +23,6 @@ Install the latest version of the [AWS CDK](https://docs.aws.amazon.com/cdk/v2/g
 npm install -g aws-cdk
 ```
 
-Ensure [Docker](https://www.docker.com/) is installed and running.
-
 After cloning the repository, change into the project directory, and install the necessary dependencies:
 
 ```javascript
