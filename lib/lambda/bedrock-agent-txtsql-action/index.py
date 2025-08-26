@@ -71,7 +71,7 @@ def lambda_handler(event, context):
     result = ''
     response_code = 200
 
-    if api_path == '/athenaQuery':
+    if api_path == 'athenaQuery':
         result = athena_query_handler(event)
     else:
         response_code = 404

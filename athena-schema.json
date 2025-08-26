@@ -6,7 +6,7 @@
     "version": "1.0.0"
   },
   "paths": {
-    "/athenaQuery": {
+    "athenaQuery": {
       "post": {
         "description": "Execute a query on an Athena database",
         "requestBody": {
