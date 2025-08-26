@@ -665,7 +665,7 @@ Resources:
             - Name: block_workchain
               Type: int
             - Name: block_shard
-              Type: int
+              Type: bigint
             - Name: block_seqno
               Type: int
             - Name: mc_block_seqno

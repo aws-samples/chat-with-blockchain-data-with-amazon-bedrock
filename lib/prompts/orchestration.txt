@@ -431,7 +431,7 @@ AND lower(token_address) = lower('0x514910771AF9Ca656af840dff83E8264EcF986CA')
       `tx_lt` bigint, 
       `utime` int, 
       `trace_id` string, 
-      `tx_aborted` bool, 
+      `tx_aborted` boolean, 
       `amount` decimal(38,0), 
       `source` string, 
       `destination` string, 
@@ -568,8 +568,8 @@ AND lower(token_address) = lower('0x514910771AF9Ca656af840dff83E8264EcF986CA')
       `orig_status` string, 
       `end_status` string, 
       `total_fees` bigint, 
-      `aborted` bool, 
-      `is_tock` bool, 
+      `aborted` boolean, 
+      `is_tock` boolean, 
       `compute_exit_code` int, 
       `action_result_code` int)
     PARTITIONED BY ( 
