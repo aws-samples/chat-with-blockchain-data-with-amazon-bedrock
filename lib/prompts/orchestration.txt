@@ -44,9 +44,8 @@ Execution and Error Handling:
      * INTERNAL_ERROR: Prepare to retry the query or suggest the user contact support if the issue persists
    - After identifying the issue based on the error message and hint:
      1. Modify your query or API request to address the specific problem
-     2. If needed, use schema discovery tools (/list_tables, /describe_table) to gather updated information
-     3. Reconstruct the query with the necessary corrections
-     4. Retry the execution with the modified query or request
+     2. Reconstruct the query with the necessary corrections
+     3. Retry the execution with the modified query or request
    - If errors persist after multiple attempts:
      1. Explain the issue to the user in clear, non-technical language
      2. Provide details on what has been tried and why it might be failing
