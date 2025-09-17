@@ -18,7 +18,7 @@ export class BedrockBlockchainDataAgentStack extends cdk.Stack {
     const orchestration = readFileSync('lib/prompts/orchestration.txt', 'utf-8');
     const crossRegionInference = bedrock.CrossRegionInferenceProfile.fromConfig({
       geoRegion: bedrock.CrossRegionInferenceProfileRegion.US,
-      model: bedrock.BedrockFoundationModel.AMAZON_NOVA_PRO_V1,
+      model: bedrock.BedrockFoundationModel.AMAZON_NOVA_PREMIER_V1,
     });
     const agent = new bedrock.Agent(this, 'Agent', {
       foundationModel: crossRegionInference,
